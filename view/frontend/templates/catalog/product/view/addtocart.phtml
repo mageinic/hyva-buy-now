@@ -1,0 +1,91 @@
+<?php
+/**
+ * MageINIC
+ * Copyright (C) 2023 MageINIC <support@mageinic.com>
+ *
+ * NOTICE OF LICENSE
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see https://opensource.org/licenses/gpl-3.0.html.
+ *
+ * Do not edit or add to this file if you wish to upgrade this extension to newer
+ * version in the future.
+ *
+ * @category MageINIC
+ * @package Hyva_MageINICBuyNow
+ * @copyright Copyright (c) 2023 MageINIC (https://www.mageinic.com/)
+ * @license https://opensource.org/licenses/gpl-3.0.html GNU General Public License,version 3 (GPL-3.0)
+ * @author MageINIC <support@mageinic.com>
+ */
+
+declare(strict_types=1);
+
+use Hyva\Theme\Model\ViewModelRegistry;
+use Hyva\Theme\ViewModel\CurrentProduct;
+use Hyva\Theme\ViewModel\HeroiconsOutline;
+use Magento\Framework\Escaper;
+use Magento\Framework\View\Element\Template;
+use MageINIC\BuyNow\ViewModel\BuyNow;
+
+/** @var Template $block */
+/** @var Escaper $escaper */
+/** @var ViewModelRegistry $viewModels */
+/** @var CurrentProduct $currentProduct */
+
+/** @var HeroiconsOutline $heroicons */
+$heroicons = $viewModels->require(HeroiconsOutline::class);
+
+$viewModel = $viewModels->require(BuyNow::class);
+$helper = $viewModel->getBuyNowHelper();
+$isModuleEnable = $helper->isEnable();
+$buttonTitle = $helper->getButtonTitle();
+$buyNow = $helper->isEnableProductPage();
+$currentProduct = $viewModels->require(CurrentProduct::class);
+$product = $currentProduct->get();
+$productId = $product->getId();
+?>
+
+<button type="submit"
+        form="product_addtocart_form"
+        title="<?= $escaper->escapeHtmlAttr(__('Add to Cart')) ?>"
+        class="btn btn-primary"
+        id="product-addtocart-button"
+>
+    <?= $heroicons->shoppingCartHtml('border-current'); ?>
+    <span class="hidden sm:block md:hidden lg:block"><?= $block->getData('is_cart_configure') ?
+            $escaper->escapeHtml(__('Update item')) :
+            $escaper->escapeHtml(__('Add to Cart')) ?>
+    </span>
+</button>
+<?php if ($isModuleEnable && $buyNow):
+    $url = $block->getUrl('buynow/cart/buynowcart',
+        ['product' => $product->getEntityId(), '_secure' => true]
+    );
+    $buttonTitle = $helper->getButtonTitle();?>
+    <div class="mageinic-buynow-view">
+        <button
+                form="product_addtocart_form"
+                x-data="initBuyNowDetailPage()"
+                @click='addToBuyNow("<?= (string)$url ?>")'
+                title="<?= $escaper->escapeHtmlAttr(__($buttonTitle)) ?>"
+                class="action primary">
+            <span><?= $escaper->escapeHtml(__($buttonTitle)) ?></span>
+        </button>
+    </div>
+    <script>
+        function initBuyNowDetailPage() {
+            return {
+                addToBuyNow(action) {
+                   //alert(action)
+                    document.getElementById('product_addtocart_form').action = action;
+                }
+            }
+        }
+    </script>
+<?php endif; ?>
+<?= $block->getChildHtml('', true) ?>

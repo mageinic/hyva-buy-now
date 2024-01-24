@@ -1,0 +1,30 @@
+{
+    "name": "mageinic/hyva-buy-now",
+    "description": "Hyva Buy Now by MageINIC, Buy Now extension streamlines the shopping process by offering a convenient Buy Now button. This feature allows customers to make quick purchases with a single click, directing them straight to the checkout page. Admins have the flexibility to enable or disable this functionality, customize the button label, and specify where it appears on website.",
+    "type": "magento2-module",
+    "license": [
+        "OSL-3.0",
+        "AFL-3.0"
+    ],
+    "version": "1.0.0",
+    "require": {
+        "php": "^8.0",
+        "hyva-themes/magento2-compat-module-fallback": "*",
+        "mageinic/buynow": "1.0.*"
+    },
+    "authors": [
+        {
+            "name": "MageINIC",
+            "email": "support@mageinic.com",
+            "homepage": "https://www.mageinic.com"
+        }
+    ],
+    "autoload": {
+        "files": [
+            "registration.php"
+        ],
+        "psr-4": {
+            "Hyva\\MageINICBuyNow\\": ""
+        }
+    }
+}
